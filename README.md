@@ -1,1 +1,4 @@
-# Proyecto 1 para Gr�ficos por Computadora
+# Proyecto 1 para Gráficos por Computadora
+Integrantes del equipo:
+* Fabio Calo
+* Alberto Márquez
