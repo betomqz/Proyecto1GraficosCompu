@@ -1,0 +1,5 @@
+﻿  glad.c
+  Main.cpp
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(283,56): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(287,55): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
+  Proyecto1.vcxproj -> D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\x64\Debug\Proyecto1.exe
