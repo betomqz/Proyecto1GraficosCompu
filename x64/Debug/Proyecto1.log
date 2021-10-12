@@ -1,5 +1,6 @@
-﻿  glad.c
-  Main.cpp
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(283,56): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(287,55): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
+﻿  Main.cpp
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\includes\learnopengl\shader_s.h(44,40): warning C4101: 'e': variable local sin referencia
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(249,27): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(261,56): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(272,55): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
   Proyecto1.vcxproj -> D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\x64\Debug\Proyecto1.exe

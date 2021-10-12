@@ -7,6 +7,14 @@
 */
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb_image.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <learnopengl/shader_s.h>
+
 #include <iostream>
 // Fue necesario incluir otras bibliotecas para simplificar el código. Principalmente
 // para manejar números complejos y estructuras dinámicas.
@@ -22,28 +30,6 @@ void processInput(GLFWwindow* window);
 // Tamaño de la pantalla
 const unsigned int SCR_WIDTH = 1000;
 const unsigned int SCR_HEIGHT = 1000;
-
-// Vertex Shader
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-// Fragment Shader para los triángulos tipo cero
-const char* fragmentShader1Source = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(0.043f, 0.145f, 0.271f, 1.0f);\n"
-"}\n\0";
-// Fragment Shader para los triángulos tipo uno
-const char* fragmentShader2Source = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(0.698f, 0.761f, 0.929f, 1.0f);\n"
-"}\n\0";
 
 // #############################################################################
 // Declaración de constantes a utilizar a lo largo de este programa
@@ -225,26 +211,7 @@ int main()
 
     // construimos y compilamos los shaders
     // ------------------------------------
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    unsigned int fragmentShaderCero = glCreateShader(GL_FRAGMENT_SHADER);
-    unsigned int fragmentShaderUno = glCreateShader(GL_FRAGMENT_SHADER);
-    unsigned int shaderProgramCero = glCreateProgram();
-    unsigned int shaderProgramUno = glCreateProgram();
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    glShaderSource(fragmentShaderCero, 1, &fragmentShader1Source, NULL);
-    glCompileShader(fragmentShaderCero);
-    glShaderSource(fragmentShaderUno, 1, &fragmentShader2Source, NULL);
-    glCompileShader(fragmentShaderUno);
-
-    glAttachShader(shaderProgramCero, vertexShader);
-    glAttachShader(shaderProgramCero, fragmentShaderCero);
-    glLinkProgram(shaderProgramCero);
-
-    glAttachShader(shaderProgramUno, vertexShader);
-    glAttachShader(shaderProgramUno, fragmentShaderUno);
-    glLinkProgram(shaderProgramUno);
+    Shader ourShader("proyecto1.vs", "proyecto1.fs");
 
     // ------------------------------------------------------------------
     unsigned int VBOs[2], VAOs[2];
@@ -267,8 +234,7 @@ int main()
 
 
     // Para dibujar únicamente los bordes
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);    
 
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
@@ -277,12 +243,31 @@ int main()
         glClearColor(0.871f, 0.878f, 0.95f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // create transformations
+        glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first        
+        transform = glm::rotate(transform, (float)(glfwGetTime() * 0.5), glm::vec3(0.0f, 0.0f, 1.0f));
+        float scaleAmount = sin(glfwGetTime()*2)*0.5 + 0.5;
+        transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
         // Ahora sí, propiamente, dibujamos los triángulos tipo cero
-        glUseProgram(shaderProgramCero);
+        ourShader.use();
+        GLfloat color1[] = { 0.043f, 0.145f, 0.271f };
+        unsigned int color1Loc = glGetUniformLocation(ourShader.ID, "ourColor");
+        glUniform3fv(color1Loc, 1, color1);
+        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");             
+
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
         glBindVertexArray(VAOs[0]);
         glDrawArrays(GL_TRIANGLES, 0, vert_ceros.size());
+        
         // Análogamente, dibujamos los triángulos tipo uno
-        glUseProgram(shaderProgramUno);
+        ourShader.use();
+        GLfloat color2[] = { 0.698f, 0.761f, 0.929f };
+        unsigned int color2Loc = glGetUniformLocation(ourShader.ID, "ourColor");
+        glUniform3fv(color2Loc, 1, color2);
+        unsigned int transformLoc2 = glGetUniformLocation(ourShader.ID, "transform");               
+
+        glUniformMatrix4fv(transformLoc2, 1, GL_FALSE, glm::value_ptr(transform));
         glBindVertexArray(VAOs[1]);
         glDrawArrays(GL_TRIANGLES, 0, vert_unos.size());
 
@@ -294,9 +279,7 @@ int main()
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
     glDeleteVertexArrays(2, VAOs);
-    glDeleteBuffers(2, VBOs);
-    glDeleteProgram(shaderProgramCero);
-    glDeleteProgram(shaderProgramUno);
+    glDeleteBuffers(2, VBOs);    
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
