@@ -1,21 +1,8 @@
 ﻿  Main.cpp
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(71,26): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(73,26): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(100,27): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(101,27): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(304,23): warning C4018: '<': no coinciden signed/unsigned
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(393,23): warning C4018: '<': no coinciden signed/unsigned
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(396,23): warning C4018: '<': no coinciden signed/unsigned
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(699,97): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(704,97): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(891,30): warning C4244: '-=': conversión de 'double' a 'float'; posible pérdida de datos
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(904,43): warning C4244: '-=': conversión de 'double' a 'float'; posible pérdida de datos
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(921,63): warning C4244: '+=': conversión de 'double' a 'float'; posible pérdida de datos
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(938,48): warning C4244: '-=': conversión de 'double' a 'float'; posible pérdida de datos
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(955,22): warning C4305: '=': truncamiento de 'double' a 'float'
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(971,25): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(973,22): warning C4305: '=': truncamiento de 'double' a 'float'
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(974,23): warning C4305: '=': truncamiento de 'double' a 'float'
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(988,57): warning C4244: '+=': conversión de 'double' a 'float'; posible pérdida de datos
-D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(997,56): warning C4244: '-=': conversión de 'double' a 'float'; posible pérdida de datos
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\includes\learnopengl\shader_s.h(44,40): warning C4101: 'e': variable local sin referencia
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(352,68): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(411,56): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(418,55): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(429,63): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
+D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\Main.cpp(436,62): warning C4267: 'argumento': conversión de 'size_t' a 'GLsizei'; posible pérdida de datos
   Proyecto1.vcxproj -> D:\OneDrive\Documentos\ITAM\Quinto semestre\Gráficos por computadora\Proyecto1\x64\Debug\Proyecto1.exe

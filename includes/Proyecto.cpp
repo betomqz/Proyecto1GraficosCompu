@@ -83,7 +83,7 @@ unsigned int numTriObtu = 0;
 unsigned int numCiclos = 4;
 
 //Traslada la teselación
-const float tras[2] = {-0.25f, 0.0f};
+const float tras[2] = { -0.25f, 0.0f };
 
 //Índice del triángulo a omitir de la teselación para dejar un espacio
 const int TRI_A_OMITIR = 76;
@@ -96,7 +96,7 @@ int omitir_index = 0;
 */
 
 //Posición y tamaño del triángulo (acutángulo) que se mueve
-float pos[2] = {1.0f, 0.0338139f}; //Vértice izquierdo
+float pos[2] = { 1.0f, 0.0338139f }; //Vértice izquierdo
 float ladoCorto = 0.109424;
 float ladoLargo = 0.177051;;
 //Las medidas del triángulo (obtusángulo) nuevo son 0.109424 (lados cortos) y 0.177051
@@ -121,7 +121,7 @@ float direccion = 1;
 * 13: La teselación entera alterna colores
 */
 //                          0     1     2     3     4     5     6     7     8     9     10    11    12    13
-const float tiempos[14] = {2.0f, 1.0f, 1.5f, 1.5f, 0.5f, 2.0f, 0.9f, 0.1f, 4.0f, 2.0f, 2.0f, 1.0f, 2.0f, 3.5f};
+const float tiempos[14] = { 2.0f, 1.0f, 1.5f, 1.5f, 0.5f, 2.0f, 0.9f, 0.1f, 4.0f, 2.0f, 2.0f, 1.0f, 2.0f, 3.5f };
 //const float tiempos[15] = {0.0f, 2.0f, 3.0f, 4.5f, 6.0f, 6.5f, 7.5f, 8.4f, 8.5f, 12.5f, 14.5f, 16.5f, 17.5f, 19.5f, 23.0f};
 int tiempoIndex = 0;
 
@@ -134,7 +134,7 @@ typedef struct RTri {
 } RTri;
 
 //Número de triángulos usados para aproximar un círculo
-unsigned const int TRI_POR_CIRC = 10; 
+unsigned const int TRI_POR_CIRC = 10;
 
 //Círculos
 typedef struct Circ {
@@ -163,7 +163,7 @@ int main() {
     // glfw window creation
     // --------------------
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if(window == NULL) {
+    if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
@@ -174,7 +174,7 @@ int main() {
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
-    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
@@ -256,7 +256,7 @@ int main() {
     glGenVertexArrays(7, VAO);
     glGenBuffers(7, VBO);
     glGenBuffers(7, EBO);
-    
+
     //----INICIALIZACIÓN----
     //Lista de triángulos
     list<RTri> listaTri;
@@ -294,14 +294,14 @@ int main() {
     };
 
     //Inicializa la lista con los 10 triángulos
-    for(int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; i++) {
         RTri nuevoTri = crearTri(0, verticesIni[0], verticesIni[1], verticesIni[3 * indicesIni[3 * i + 1]], verticesIni[3 * indicesIni[3 * i + 1] + 1],
             verticesIni[3 * indicesIni[3 * i + 2]], verticesIni[3 * indicesIni[3 * i + 2] + 1]);
         listaTri.push_back(nuevoTri);
     }
 
     //Subdivide todos los tríangulos en la lista, de acuerdo al número de ciclos
-    for(int i = 0; i < numCiclos; i++)
+    for (int i = 0; i < numCiclos; i++)
         subdividir(listaTri);
 
     /*
@@ -323,9 +323,9 @@ int main() {
     vector<float> vertices5; //Lista de vértices del tri. roto
 
     //Guarda los vértices de todos los triángulos en vectores (de acuerdo a su color)
-    for(auto const& triActual : listaTri) {
-        if(omitir_index != TRI_A_OMITIR) {
-            if(triActual.color == 0) {
+    for (auto const& triActual : listaTri) {
+        if (omitir_index != TRI_A_OMITIR) {
+            if (triActual.color == 0) {
                 vertices0.push_back(triActual.a[0]);
                 vertices0.push_back(triActual.a[1]);
                 vertices0.push_back(0.0f);
@@ -335,7 +335,8 @@ int main() {
                 vertices0.push_back(triActual.c[0]);
                 vertices0.push_back(triActual.c[1]);
                 vertices0.push_back(0.0f);
-            } else {
+            }
+            else {
                 vertices1.push_back(triActual.a[0]);
                 vertices1.push_back(triActual.a[1]);
                 vertices1.push_back(0.0f);
@@ -348,17 +349,19 @@ int main() {
             }
 
             omitir_index++;
-        } else {
-            if(triActual.color == 0) {
+        }
+        else {
+            if (triActual.color == 0) {
                 numTriAcu--;
-            } else {
+            }
+            else {
                 numTriObtu--;
             }
 
             omitir_index++;
-            
+
             cout << "a: " << triActual.a[0] << ", " << triActual.a[1] << '\n' << "b: " << triActual.b[0] << ", " << triActual.b[1]
-            << '\n' << "c: " << triActual.c[0] << ", " << triActual.c[1];
+                << '\n' << "c: " << triActual.c[0] << ", " << triActual.c[1];
             //cout << sqrt(pow(triActual.a[0] - triActual.b[0], 2) + pow(triActual.a[1] - triActual.b[1], 2)) << '\n';
             //cout << sqrt(pow(triActual.a[0] - triActual.c[0], 2) + pow(triActual.a[1] - triActual.c[1], 2)) << '\n';
             //cout << sqrt(pow(triActual.c[0] - triActual.b[0], 2) + pow(triActual.c[1] - triActual.b[1], 2)) << '\n';
@@ -387,10 +390,10 @@ int main() {
     vector<int> indices4;
     vector<int> indices5;
 
-    for(int i = 0; i < 3 * numTriAcu; i++)
+    for (int i = 0; i < 3 * numTriAcu; i++)
         indices0.push_back(i);
 
-    for(int i = 0; i < 3 * numTriObtu; i++)
+    for (int i = 0; i < 3 * numTriObtu; i++)
         indices1.push_back(i);
 
     /*
@@ -430,26 +433,28 @@ int main() {
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
-    
+
     RTri protag, triRoto;
-    
+
     glfwSetTime(0.0f);
 
     // render loop
     // -----------
-    while(!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window)) {
         //Redibuja el tri. cada cuadro
         listaTri.clear();
 
-        if(tiempoIndex < 7) {
-            protag = crearTri(0, pos[0], pos[1], 
+        if (tiempoIndex < 7) {
+            protag = crearTri(0, pos[0], pos[1],
                 rotX(pos[0], pos[1], pos[0] + ladoLargo, pos[1], PI / 10), rotY(pos[0], pos[1], pos[0] + ladoLargo, pos[1], PI / 10),
                 rotX(pos[0], pos[1], pos[0] + ladoLargo, pos[1], -PI / 10), rotY(pos[0], pos[1], pos[0] + ladoLargo, pos[1], -PI / 10));
-        } else if(tiempoIndex == 7) {
+        }
+        else if (tiempoIndex == 7) {
             protag = crearTri(0, pos[0], pos[1],
                 rotX(pos[0], pos[1], 0.654901f, -1.0f, PI / 5), rotY(pos[0], pos[1], 0.654901f, -1.0f, PI / 5),
                 0.654901f, -1.0f);
-        } else if(tiempoIndex == 8 && glfwGetTime() < 1.0f / 60.0f) {
+        }
+        else if (tiempoIndex == 8 && glfwGetTime() < 1.0f / 60.0f) {
             RTri temp = crearTri(0, protag.a[0], protag.a[1], protag.c[0], protag.c[1], protag.b[0], protag.b[1]);
             listaTri.push_back(temp);
             subdividir(listaTri);
@@ -458,10 +463,12 @@ int main() {
             pos[1] = listaTri.back().a[1];
             protag = crearTri(0, pos[0], pos[1], listaTri.back().b[0], listaTri.back().b[1], listaTri.back().c[0], listaTri.back().c[1]);
             triRoto = listaTri.front();
-        } else if(tiempoIndex == 9) {
+        }
+        else if (tiempoIndex == 9) {
             protag = crearTri(0, pos[0], pos[1], protag.b[0], protag.b[1],
                 rotX(pos[0], pos[1], protag.b[0], protag.b[1], 3 * PI / 5), rotY(pos[0], pos[1], protag.b[0], protag.b[1], 3 * PI / 5));
-        } else if(tiempoIndex > 9) {
+        }
+        else if (tiempoIndex > 9) {
             protag = crearTri(0, pos[0], pos[1],
                 rotX(pos[0], pos[1], pos[0] + ladoCorto, pos[1], -3 * PI / 10), rotY(pos[0], pos[1], pos[0] + ladoCorto, pos[1], -3 * PI / 10),
                 rotX(pos[0], pos[1], pos[0] + ladoCorto, pos[1], 3 * PI / 10), rotY(pos[0], pos[1], pos[0] + ladoCorto, pos[1], 3 * PI / 10));
@@ -482,9 +489,9 @@ int main() {
         vertices4.push_back(protag.c[1]);
         vertices4.push_back(0.0f);
 
-        for(int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
             indices4.push_back(i);
-        
+
         vertices5.push_back(triRoto.a[0]);
         vertices5.push_back(triRoto.a[1]);
         vertices5.push_back(0.0f);
@@ -495,11 +502,11 @@ int main() {
         vertices5.push_back(triRoto.c[1]);
         vertices5.push_back(0.0f);
 
-        for(int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
             indices5.push_back(i);
 
         //Triángulo que se mueve
-        if(tiempoIndex < 12) {
+        if (tiempoIndex < 12) {
             glBindVertexArray(VAO[4]);
             glBindBuffer(GL_ARRAY_BUFFER, VBO[4]);
             glBufferData(GL_ARRAY_BUFFER, vertices4.size() * sizeof(float), &vertices4[0], GL_STATIC_DRAW);
@@ -509,7 +516,8 @@ int main() {
             //glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices4.size() * sizeof(int), &indices4[0], GL_DYNAMIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
-        } else if(tiempoIndex == 12) {
+        }
+        else if (tiempoIndex == 12) {
             //Nuevo tri. incorporado
             glBindVertexArray(VAO[6]);
             glBindBuffer(GL_ARRAY_BUFFER, VBO[6]);
@@ -520,12 +528,13 @@ int main() {
             //glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices4.size() * sizeof(int), &indices4[0], GL_DYNAMIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
-        } else {
+        }
+        else {
 
         }
-        
+
         //Triángulo roto
-        if(tiempoIndex > 7) {
+        if (tiempoIndex > 7) {
             glBindVertexArray(VAO[5]);
             glBindBuffer(GL_ARRAY_BUFFER, VBO[5]);
             glBufferData(GL_ARRAY_BUFFER, vertices5.size() * sizeof(float), &vertices5[0], GL_STATIC_DRAW);
@@ -543,29 +552,30 @@ int main() {
         vertices3.clear();
         indices2.clear();
         indices3.clear();
-        
-        if(tiempoIndex < 7) {
+
+        if (tiempoIndex < 7) {
             //Ojo izquierdo
             listaCirc.push_back(crearCirc(0, pos[0] + 0.08f, pos[1] + 0.02f, 0.018f));
             listaCirc.push_back(crearCirc(1, pos[0] + 0.068f, pos[1] + 0.02f, 0.014f));
             //Ojo derecho
             listaCirc.push_back(crearCirc(0, pos[0] + 0.14f, pos[1] + 0.02f, 0.018f));
             listaCirc.push_back(crearCirc(1, pos[0] + 0.128f, pos[1] + 0.02f, 0.014f));
-        
-            for(auto const& circActual : listaCirc) {
-                if(circActual.color == 0) {
-                    for(int i = 0; i < TRI_POR_CIRC * 9; i++)
+
+            for (auto const& circActual : listaCirc) {
+                if (circActual.color == 0) {
+                    for (int i = 0; i < TRI_POR_CIRC * 9; i++)
                         vertices2.push_back(circActual.listaVert[i]);
-                } else {
-                    for(int i = 0; i < TRI_POR_CIRC * 9; i++)
+                }
+                else {
+                    for (int i = 0; i < TRI_POR_CIRC * 9; i++)
                         vertices3.push_back(circActual.listaVert[i]);
                 }
             }
 
-            for(int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
+            for (int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
                 indices2.push_back(i);
 
-            for(int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
+            for (int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
                 indices3.push_back(i);
 
             //Círculos blancos
@@ -592,7 +602,8 @@ int main() {
             //glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices3.size() * sizeof(int), &indices3[0], GL_DYNAMIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
-        } else if(tiempoIndex > 9 && tiempoIndex < 12) {
+        }
+        else if (tiempoIndex > 9 && tiempoIndex < 12) {
             //Ojo izquierdo
             listaCirc.push_back(crearCirc(0, pos[0] + 0.013f, pos[1] + 0.01f, 0.016f));
             listaCirc.push_back(crearCirc(1, pos[0] - 0.005f, pos[1] + 0.01f, 0.012f));
@@ -600,20 +611,21 @@ int main() {
             listaCirc.push_back(crearCirc(0, pos[0] + 0.058f, pos[1] + 0.01f, 0.016f));
             listaCirc.push_back(crearCirc(1, pos[0] + 0.040f, pos[1] + 0.01f, 0.012f));
 
-            for(auto const& circActual : listaCirc) {
-                if(circActual.color == 0) {
-                    for(int i = 0; i < TRI_POR_CIRC * 9; i++)
+            for (auto const& circActual : listaCirc) {
+                if (circActual.color == 0) {
+                    for (int i = 0; i < TRI_POR_CIRC * 9; i++)
                         vertices2.push_back(circActual.listaVert[i]);
-                } else {
-                    for(int i = 0; i < TRI_POR_CIRC * 9; i++)
+                }
+                else {
+                    for (int i = 0; i < TRI_POR_CIRC * 9; i++)
                         vertices3.push_back(circActual.listaVert[i]);
                 }
             }
 
-            for(int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
+            for (int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
                 indices2.push_back(i);
 
-            for(int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
+            for (int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
                 indices3.push_back(i);
 
             //Círculos blancos
@@ -638,23 +650,25 @@ int main() {
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
         }
-        
+
         // input
         // -----
         processInput(window);
 
         //Control de tiempos
-        if(tiempoIndex < sizeof(tiempos) / sizeof(float)) {
-            if(glfwGetTime() <= tiempos[tiempoIndex]) {
+        if (tiempoIndex < sizeof(tiempos) / sizeof(float)) {
+            if (glfwGetTime() <= tiempos[tiempoIndex]) {
                 animar();
-            } else {
+            }
+            else {
                 cout << "Intervalo " << tiempoIndex << ": " << protag.a[0] << ", " << protag.a[1] << "; " << protag.b[0] << ", "
-                     << protag.b[1] << "; " << protag.c[0] << ", " << protag.c[1] << '\n';
+                    << protag.b[1] << "; " << protag.c[0] << ", " << protag.c[1] << '\n';
 
                 glfwSetTime(0.0f);
                 tiempoIndex++;
             }
-        } else {
+        }
+        else {
             glfwTerminate();
             return 0;
         }
@@ -688,7 +702,7 @@ int main() {
         glUseProgram(shaderProgram3);
         glBindVertexArray(VAO[3]);
         glDrawElements(GL_TRIANGLES, 9 * TRI_POR_CIRC * listaCirc.size() / 2, GL_UNSIGNED_INT, 0);
-        
+
         //Triángulo roto
         glUseProgram(shaderProgram5);
         glBindVertexArray(VAO[5]);
@@ -726,7 +740,7 @@ int main() {
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void processInput(GLFWwindow* window) {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
 
@@ -753,8 +767,8 @@ RTri crearTri(int color, float a0, float a1, float b0, float b1, float c0, float
 void subdividir(list<RTri>& listaTri) {
     list<RTri> listaMod;
 
-    for(auto const& triActual : listaTri) {
-        if(triActual.color == 0) {
+    for (auto const& triActual : listaTri) {
+        if (triActual.color == 0) {
             //Triángulo acutángulo
             float a0 = triActual.a[0];
             float a1 = triActual.a[1];
@@ -779,7 +793,8 @@ void subdividir(list<RTri>& listaTri) {
 
             //Actualiza el total de triángulos
             numTriObtu++;
-        } else {
+        }
+        else {
             //Triángulo obtusángulo
             float a0 = triActual.a[0];
             float a1 = triActual.a[1];
@@ -835,7 +850,7 @@ Circ crearCirc(int color, float x, float y, float radio) {
     nuevoCirc.color = color;
     float theta = 2 * PI / TRI_POR_CIRC;
 
-    for(int i = 0; i < 9 * TRI_POR_CIRC; i += 9) {
+    for (int i = 0; i < 9 * TRI_POR_CIRC; i += 9) {
         //Primer vért.
         nuevoCirc.listaVert[i] = x;
         nuevoCirc.listaVert[i + 1] = y;
@@ -851,7 +866,7 @@ Circ crearCirc(int color, float x, float y, float radio) {
         nuevoCirc.listaVert[i + 7] = y - radio * cos(-(i + 1) * theta);
         nuevoCirc.listaVert[i + 8] = 0.0f;
     }
-    
+
     //for(int i = 0; i < 9 * TRI_POR_CIRC; i += 3)
         //std::cout << nuevoCirc.lista_tri[i] << ", " << nuevoCirc.lista_tri[i + 1] << ", " << nuevoCirc.lista_tri[i + 2] << "\n";
 
@@ -863,125 +878,137 @@ void animar() {
     float g = 3;
     float a0, a1, b0, b1, c0, c1, theta;
 
-    switch(tiempoIndex) {
-        case 0:
-            break;
+    switch (tiempoIndex) {
+    case 0:
+        break;
 
-        case 1:
-            //Posición inicial: (1, 0.0338139)
-            if(pos[0] >= 0.8) {
-                //pos[0] -= 0.01;
-            }
+    case 1:
+        //Posición inicial: (1, 0.0338139)
+        if (pos[0] >= 0.8) {
+            //pos[0] -= 0.01;
+        }
 
-            pos[0] -= 0.2 / inter;
-            
-            //cout << inter << '\n';
-            //cout << pos[0] << '\n';
-            
-            //Posición final: (0.8, 0.0338139)
-            break;
+        pos[0] -= 0.2 / inter;
 
-        case 2:
-            break;
+        //cout << inter << '\n';
+        //cout << pos[0] << '\n';
 
-        case 3:
-            //Posición inicial: (0.8002, 0.0338139)
-            pos[0] -= (0.8 - 0.398975) / inter;
+        //Posición final: (0.8, 0.0338139)
+        break;
 
-            //Posición final: (0.398975, 0.0338139)
-            break;
+    case 2:
+        break;
 
-        case 4:
-            break;
+    case 3:
+        //Posición inicial: (0.8002, 0.0338139)
+        pos[0] -= (0.8 - 0.398975) / inter;
 
-        case 5:
-            //Posición inicial: (0.398975, 0.0338139)
-            if(pos[0] < 0.398975) {
-                direccion = 1.0f;
-            } else if(pos[0] > 0.5) {
-                direccion = -1.0;
-            }
+        //Posición final: (0.398975, 0.0338139)
+        break;
 
-            pos[0] += direccion * 5.199 * (0.5 - 0.398975) / inter;
-            //cout << pos[0] << '\n';
+    case 4:
+        break;
 
-            /*
-            * Posición del triángulo vacío:
-            * A: 0.398975, 0.0338139
-            * B: 0.463292, 0.122339
-            * C: 0.463292, -0.0547117
-            */
+    case 5:
+        //Posición inicial: (0.398975, 0.0338139)
+        if (pos[0] < 0.398975) {
+            direccion = 1.0f;
+        }
+        else if (pos[0] > 0.5) {
+            direccion = -1.0;
+        }
 
-            //Posición final: (0.50298, 0.0338139)
-            break;
+        pos[0] += direccion * 5.199 * (0.5 - 0.398975) / inter;
+        //cout << pos[0] << '\n';
 
-        case 6:
-            //Posición inicial: (0.50298, 0.0338139)
+        /*
+        * Posición del triángulo vacío:
+        * A: 0.398975, 0.0338139
+        * B: 0.463292, 0.122339
+        * C: 0.463292, -0.0547117
+        */
 
-            if(pos[1] + ladoLargo * sin(-PI / 10) > -1) {
-                pos[1] -= g * glfwGetTime() / inter;
-            } else if(pos[1] + ladoLargo * sin(-PI / 10) < - 1) {
-                pos[1] = -ladoLargo * sin(-PI / 10) - 1;
-            }
+        //Posición final: (0.50298, 0.0338139)
+        break;
 
-            //cout << "A: " << pos[0] << ", " << pos[1] << " B: " << pos[0] + ladoLargo * cos(PI / 10) << ", " << pos[1] + ladoLargo * sin(PI / 10)
-            //<< " C: " << pos[0] + ladoLargo * cos(-PI / 10) << ", " << pos[1] + ladoLargo * sin(-PI / 10) << '\n';
+    case 6:
+        //Posición inicial: (0.50298, 0.0338139)
 
-            //Posición final: (0.486515, -0.945288)
-            break;
-        
-        case 7:
-            //Posición inicial: (0.486515, -0.945288)
-            //(0.486515, -0.945288); (0.654901, -0.890576); (0.654901, -1)
-            //(0.477849, -1       ); (0.621087, -0.895931); (0.654901, -1)
-            theta = PI / (10 * inter);
-            c0 = 0.654901;
-            c1 = -1;
-            a0 = rotX(c0, c1, pos[0], pos[1], theta);
-            a1 = rotY(c0, c1, pos[0], pos[1], theta);
+        if (pos[1] + ladoLargo * sin(-PI / 10) > -1) {
+            pos[1] -= g * glfwGetTime() / inter;
+        }
+        else if (pos[1] + ladoLargo * sin(-PI / 10) < -1) {
+            pos[1] = -ladoLargo * sin(-PI / 10) - 1;
+        }
 
-            pos[0] = a0;
-            pos[1] = a1;
+        //cout << "A: " << pos[0] << ", " << pos[1] << " B: " << pos[0] + ladoLargo * cos(PI / 10) << ", " << pos[1] + ladoLargo * sin(PI / 10)
+        //<< " C: " << pos[0] + ladoLargo * cos(-PI / 10) << ", " << pos[1] + ladoLargo * sin(-PI / 10) << '\n';
 
-            //Posición final: (0.477849, -1)
-            break;
-        
-        case 8:
-            break;
+        //Posición final: (0.486515, -0.945288)
+        break;
 
-        case 9:
-            //Posición inicial: (0.477849, -1)
-            theta = -7 * PI / (10 * inter);
+    case 7:
+        //Posición inicial: (0.486515, -0.945288)
+        //(0.486515, -0.945288); (0.654901, -0.890576); (0.654901, -1)
+        //(0.477849, -1       ); (0.621087, -0.895931); (0.654901, -1)
+        theta = PI / (10 * inter);
+        c0 = 0.654901;
+        c1 = -1;
+        a0 = rotX(c0, c1, pos[0], pos[1], theta);
+        a1 = rotY(c0, c1, pos[0], pos[1], theta);
 
-            b0 = 0.621087;
-            b1 = -0.895931;
+        pos[0] = a0;
+        pos[1] = a1;
 
-            a0 = rotX(b0, b1, pos[0], pos[1], theta);
-            a1 = rotY(b0, b1, pos[0], pos[1], theta);
+        //Posición final: (0.477849, -1)
+        break;
 
-            pos[0] = a0;
-            pos[1] = a1;
+    case 8:
+        break;
 
-            //Posición final: ()
-            break;
+    case 9:
+        //Posición inicial: (0.477849, -1)
+        theta = -7 * PI / (10 * (inter - 0.5));
 
-        case 10:
+        b0 = 0.621087;
+        b1 = -0.895931;
 
-            break;
+        a0 = rotX(b0, b1, pos[0], pos[1], theta);
+        a1 = rotY(b0, b1, pos[0], pos[1], theta);
 
-        case 11:
+        pos[0] = a0;
+        pos[1] = a1;
 
-            break;
+        //Posición final: (0.555644, -0.806999)
+        break;
 
-        case 12:
-            break;
+    case 10:
+        // Posición inicial: (0.555644, -0.806999)
 
-        case 13:
-            break;
+        pos[1] += (0.806999 + 0.0338139) / (inter - 0.5);
 
-        default:
-            std::cout << "Índice de tiempo inválido" << std::endl;
-            glfwTerminate();
-            break;
+        // Posición final: (0.555644, 0.0338139)
+        break;
+
+    case 11:
+
+        // Posición inicial: (0.555644, 0.0338139)
+
+        pos[0] -= (0.555644 - 0.398975) / (inter - 0.5);
+
+        // Posición final: (0.555644, 0.0338139)
+
+        break;
+
+    case 12:
+        break;
+
+    case 13:
+        break;
+
+    default:
+        std::cout << "Índice de tiempo inválido" << std::endl;
+        glfwTerminate();
+        break;
     }
 }
