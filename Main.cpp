@@ -40,23 +40,23 @@ const double goldenRatio = (1 + sqrt(5)) / 2;
 const double pi = 3.1415926535897932384626433832795028841971;
 
 //Control del tiempo
-/*0: inicio
-* 1: Tri. entra en escena
-* 2: Tri. se para un momento
-* 3: Tri. se mueve hacia la teselación y choca
-* 4: Tri. se para un momento
-* 5: Tri. choca varias veces más
-* 6: Tri. cae hasta el suelo
-* 7: Tri. rota hasta quedar paralelo al suelo y se rompe
-* 8: Nuevo tri. se queda inmóvil un momento
-* 9: Nuevo tri. se endereza y le vuelven a salir ojos
-* 10: Nuevo tri. sube
-* 11: Nuevo tri. se incorpora a la teselación y cambia de color
-* 12: Pausa
-* 13: La teselación entera alterna colores
+/* 0: ### Inicio
+*  1: ### Triángulo entra en escena
+*  2: ### Triángulo se para un momento
+*  3: ### Triángulo se mueve hacia la trselación y choca.
+*  4: ### Triángulo se para un momento
+*  5: ### Triángulo choca varias veces más.
+*  6: ### Triángulo rota hasta quedar paralelo al suelo
+*  7: ### Triángulo se cae
+*  8: ### Triángulo caído se cambia de color
+*  9: ### Nuevo triángulo sube
+* 10: ### Triángulo rota hasta quedar como estaba antes
+* 11: ### Triángulo nuevo se para un momento
+* 12: ### Triángulo nuevo se incorpora a la teselación
+* 13: ### La teselación completa se hace grande
 */
 //                          0     1     2     3     4     5     6     7     8     9     10    11    12    13
-const float tiempos[14] = { 2.0f, 1.0f, 1.5f, 1.5f, 0.5f, 2.0f, 0.9f, 0.1f, 4.0f, 2.0f, 2.0f, 1.0f, 2.0f, 3.5f };
+const float tiempos[14] = { 2.0f, 1.0f, 1.5f, 1.5f, 0.5f, 2.0f, 0.5f, 0.5f, 4.0f, 2.0f, 2.0f, 1.0f, 2.0f, 3.5f };
 int tiempoIndex = 0;
 
 // Estructura que guarda la información de los triángulos a dibujar
@@ -303,36 +303,60 @@ int main()
 
     // Para dibujar únicamente los bordes
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);    
-
+    glfwSetTime(0.0f);
     while (!glfwWindowShouldClose(window)) {
         processInput(window);        
 
         // Variables
         float scaleAmount = 1.0f;
         float aux;
+        float rotAux = 0.0f;
         // Declaración de las matrices de transformación que vamos a estar usando. Son la identidad por default.
         glm::mat4 transform = glm::mat4(1.0f);          // Matriz para transformar la teselación principal
         glm::mat4 transform_protag = glm::mat4(1.0f);   // Matriz para transformar al triángulo protagonista
 
+        // Colores
+        GLfloat color1[] = { 0.043f, 0.145f, 0.271f };                  // Color 1 de la teselación principal
+        GLfloat color2[] = { 0.698f, 0.761f, 0.929f };                  // Color 2 de la teselación principal
+        GLfloat color_cero_protag[] = { 0.8705f, 0.7686f, 0.2509f };    // Color cero del triángulo protagonista
+        GLfloat color_uno_protag[] = { 0.8705f, 0.7686f, 0.2509f };     // Color uno del triángulo protagonista
+
         // Control de tiempos
         if (tiempoIndex < sizeof(tiempos) / sizeof(float)) {
-            if (glfwGetTime() <= tiempos[tiempoIndex]) {
-                // Animar. Usaremos puras transformaciones.
-                float inter = 60 * tiempos[tiempoIndex]; // Intervalo actual (en marcos)
+            if (glfwGetTime() <= tiempos[tiempoIndex]) {                
+                // Animar. Usaremos puras transformaciones.                
                 switch (tiempoIndex) {
-                case 0:
+                case 0:                    
+                    // ### Inicio
+                    // Tiempo: 2 segundos
+                    
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));                    
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    // El triángulo protagonista va a estar fuera de la escena
+                    transform_protag = glm::translate(transform_protag, glm::vec3(1.0f, 0.0f, 0.0f));                    
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                    break;
+                case 1:
+                    // ### Triángulo entra en escena
+                    // Tiempo: 1 segundos
+                    
                     // Teselación principal
                     transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
                     scaleAmount = 0.5f;
                     transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
 
                     // Triángulo protagonista                            
-                    // El triángulo protagonista va a empezar en 1.0 y queremos que llegue a 0 => tiene que moverse 1.0.
-                    transform_protag = glm::translate(transform_protag, glm::vec3(1 - 0.5*glfwGetTime(), 0.0f, 0.0f));
-                    scaleAmount = 0.5f;
-                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                    // El triángulo protagonista va a empezar en 1.0 y queremos que llegue a 0
+                    transform_protag = glm::translate(transform_protag, glm::vec3(1 - glfwGetTime(), 0.0f, 0.0f));                    
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));                    
                     break;
-                case 1:
+                case 2:                   
+                    // ### Triángulo se para un momento
+                    // Tiempo: 1.5 segundos
+                     
                     // Teselación principal
                     transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
                     scaleAmount = 0.5f;
@@ -341,40 +365,187 @@ int main()
                     scaleAmount = 0.5f;
                     transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
                     break;
-                case 2:          
+                case 3:          
+                    // ### Triángulo se mueve hacia la trselación y choca.
+                    // Tiempo: 1.5 segundos
+                    
                     // Teselación principal
                     transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
                     scaleAmount = 0.5f;
                     transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
 
-                    // Triángulo protagonista                            
-                    // 0.25\sin\left(\pi\left(4x+0.5\right)\right)-0.25
-                    aux = 0.25 * sin(pi * (4*glfwGetTime() + 0.5)) - 0.25;
+                    // Triángulo protagonista                                        
+                    // 0.25\sin\left(\pi\left(\frac{4}{3}x + 0.5\right)\right) - 0.25
+                    aux = 0.25 * sin(pi * (((float)4 / (float)3) * glfwGetTime() + 0.5)) - 0.25;
+                    transform_protag = glm::translate(transform_protag, glm::vec3(aux, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));                    
+                    break;
+                case 4:
+                    // ### Triángulo se para un momento
+                    // Tiempo: 0.5 segundos
+                    
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                                        
+                    scaleAmount = 0.5f;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                    break;
+                case 5: 
+                    // ### Triángulo choca varias veces más.
+                    // Tiempo: 2 segundos
+
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    // Triángulo protagonista                                        
+                    // y\ =\ 0.25\sin\left(\pi\left(3x+\frac{1}{2}\right)\right)-0.25
+                    aux = 0.25 * sin(pi * (3 * glfwGetTime() + 0.5)) - 0.25;
                     transform_protag = glm::translate(transform_protag, glm::vec3(aux, 0.0f, 0.0f));
                     scaleAmount = 0.5f;
                     transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
                     break;
-                case 3:
-                    break;
-                case 4: 
-                    break;
-                case 5:
-                    break;
                 case 6:
-                    break;
+                    // ### Triángulo rota hasta quedar paralelo al suelo
+                    // Tiempo: 0.5 segundos
+
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    rotAux = (float)1 / (float)5 * pi * (float)glfwGetTime();
+                    transform_protag = glm::rotate(transform_protag, rotAux, glm::vec3(0.0f, 0.0f, 1.0f));
+                    scaleAmount = 0.5f;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                    break;                    
                 case 7:
-                    break;
+                    // ### Triángulo se cae
+                    // Tiempo: 0.5 segundos
+
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    transform_protag = glm::translate(transform_protag, glm::vec3(0.0f, -2 * (float)glfwGetTime(), 0.0f));
+                    rotAux = (float)1 / (float)10 * pi;
+                    transform_protag = glm::rotate(transform_protag, rotAux, glm::vec3(0.0f, 0.0f, 1.0f));
+                    scaleAmount = 0.5f;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));                    
+                    break;                    
                 case 8:
+                    // Triángulo caído se cambia de color
+                    // Tiempo: 4 segundos
+                    
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                    
+                    transform_protag = glm::translate(transform_protag, glm::vec3(0.0f, -1.0f, 0.0f));
+                    rotAux = (float)1 / (float)10 * pi;
+                    transform_protag = glm::rotate(transform_protag, rotAux, glm::vec3(0.0f, 0.0f, 1.0f));
+                    scaleAmount = 0.5f;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    // Cambiamos los colores
+                    color_cero_protag[0] = 0.043f; color_cero_protag[1] = 0.145f; color_cero_protag[2] = 0.271f;
+                    color_uno_protag[0] = 0.698f; color_uno_protag[1] = 0.761f; color_uno_protag[2] = 0.929f;                    
                     break;
                 case 9: 
+                    // Nuevo triángulo sube
+                    // Tiempo: 2 segundos
+
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    transform_protag = glm::translate(transform_protag, glm::vec3(0.0f, 0.5 * (float)glfwGetTime() - 1, 0.0f));
+                    rotAux = (float)1 / (float)10 * pi;
+                    transform_protag = glm::rotate(transform_protag, rotAux, glm::vec3(0.0f, 0.0f, 1.0f));
+                    scaleAmount = 0.5f;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    // Cambiamos los colores
+                    color_cero_protag[0] = 0.043f; color_cero_protag[1] = 0.145f; color_cero_protag[2] = 0.271f;
+                    color_uno_protag[0] = 0.698f; color_uno_protag[1] = 0.761f; color_uno_protag[2] = 0.929f;
                     break;
                 case 10:
+                    // ### Triángulo rota hasta quedar como estaba antes
+                    // Tiempo: 2 segundos
+
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    // y=-\frac{\pi}{20}x+\frac{\pi}{10}
+                    rotAux = - 0.05 * pi * (float)glfwGetTime() + pi / (float)10;
+                    transform_protag = glm::rotate(transform_protag, rotAux, glm::vec3(0.0f, 0.0f, 1.0f));
+                    scaleAmount = 0.5f;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                    // Cambiamos los colores
+                    color_cero_protag[0] = 0.043f; color_cero_protag[1] = 0.145f; color_cero_protag[2] = 0.271f;
+                    color_uno_protag[0] = 0.698f; color_uno_protag[1] = 0.761f; color_uno_protag[2] = 0.929f;
                     break;
                 case 11:
+                    // ### Triángulo nuevo se para un momento
+                    // Tiempo: 1 segundo
+
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    scaleAmount = 0.5f;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                    // Cambiamos los colores
+                    color_cero_protag[0] = 0.043f; color_cero_protag[1] = 0.145f; color_cero_protag[2] = 0.271f;
+                    color_uno_protag[0] = 0.698f; color_uno_protag[1] = 0.761f; color_uno_protag[2] = 0.929f;
+
                     break;
                 case 12:
+                    // ### Triángulo nuevo se incorpora a la teselación
+                    // Tiempo: 2 segundos
+
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    transform_protag = glm::translate(transform_protag, glm::vec3(-0.25*(float)glfwGetTime(), 0.0f, 0.0f));
+                    scaleAmount = 0.5f;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));                    
+                    // Cambiamos los colores
+                    color_cero_protag[0] = 0.043f; color_cero_protag[1] = 0.145f; color_cero_protag[2] = 0.271f;
+                    color_uno_protag[0] = 0.698f; color_uno_protag[1] = 0.761f; color_uno_protag[2] = 0.929f;
+
                     break;
                 case 13:
+                    // ### La teselación completa se hace grande
+                    // Tiempo:  segundos
+
+                    // Teselación principal
+                    transform = glm::translate(transform, glm::vec3(-0.5f, 0.0f, 0.0f));                    
+                    transform_protag = glm::translate(transform_protag, glm::vec3(-0.5f, 0.0f, 0.0f));
+
+                    rotAux = 0.5 * (float)glfwGetTime();
+                    transform_protag = glm::rotate(transform_protag, rotAux, glm::vec3(0.0f, 0.0f, 1.0f));
+                    transform = glm::rotate(transform, rotAux, glm::vec3(0.0f, 0.0f, 1.0f));
+
+                    scaleAmount = 0.5*(float)glfwGetTime() + 0.5;
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                    transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    // Cambiamos los colores
+                    color_cero_protag[0] = 0.043f; color_cero_protag[1] = 0.145f; color_cero_protag[2] = 0.271f;
+                    color_uno_protag[0] = 0.698f; color_uno_protag[1] = 0.761f; color_uno_protag[2] = 0.929f;
                     break;
                 default:
                     std::cout << "Índice de tiempo inválido" << std::endl;
@@ -403,15 +574,13 @@ int main()
         ourShader.use();
         unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));       // Le pasamos al shader la transformación que queremos.
-
-        GLfloat color1[] = { 0.043f, 0.145f, 0.271f };
+        
         unsigned int color1Loc = glGetUniformLocation(ourShader.ID, "ourColor");
         glUniform3fv(color1Loc, 1, color1);        
         glBindVertexArray(VAOs[0]);
         glDrawArrays(GL_TRIANGLES, 0, vert_ceros.size());
 
-        // Análogamente, dibujamos los triángulos tipo uno de la teselación principal        
-        GLfloat color2[] = { 0.698f, 0.761f, 0.929f };
+        // Análogamente, dibujamos los triángulos tipo uno de la teselación principal                
         unsigned int color2Loc = glGetUniformLocation(ourShader.ID, "ourColor");
         glUniform3fv(color2Loc, 1, color2);     
         glBindVertexArray(VAOs[1]);
@@ -421,15 +590,13 @@ int main()
         unsigned int transf_protag_loc = glGetUniformLocation(ourShader.ID, "transform");
         glUniformMatrix4fv(transf_protag_loc, 1, GL_FALSE, glm::value_ptr(transform_protag));
 
-        // Dibujamos los triángulos tipo cero del triángulo protagonista        
-        GLfloat color_cero_protag[] = { 0.8705f, 0.7686f, 0.2509f };
+        // Dibujamos los triángulos tipo cero del triángulo protagonista                
         unsigned int color_cero_protag_loc = glGetUniformLocation(ourShader.ID, "ourColor");
         glUniform3fv(color_cero_protag_loc, 1, color_cero_protag);        
         glBindVertexArray(VAOs[2]);
         glDrawArrays(GL_TRIANGLES, 0, vert_ceros_protag.size());
 
-        // Dibujamos los triángulos tipo uno del triángulo protagonista        
-        GLfloat color_uno_protag[] = { 0.8705f, 0.7686f, 0.2509f };
+        // Dibujamos los triángulos tipo uno del triángulo protagonista                
         unsigned int color_uno_protag_loc = glGetUniformLocation(ourShader.ID, "ourColor");
         glUniform3fv(color_uno_protag_loc, 1, color_uno_protag);
         glBindVertexArray(VAOs[3]);
