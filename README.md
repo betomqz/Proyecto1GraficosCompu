@@ -2,3 +2,4 @@
 Integrantes del equipo:
 * Fabio Calo
 * Alberto Márquez
+* Pedro Olivares
