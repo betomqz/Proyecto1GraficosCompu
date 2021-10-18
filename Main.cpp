@@ -332,12 +332,29 @@ int main()
     // construimos y compilamos los shaders
     // ------------------------------------
     Shader ourShader("proyecto1.vs", "proyecto1.fs");
+    Shader ourShader2("shaderAux.vs", "shaderAux.fs");
+    
+    float desp_x = 0.25f;
+    float desp_y = 0.45f;
+    float tam = 0.25f;
+    // Foco
+    float vertices[] = {
+        // positions          // colors                     // texture coords
+         0.5f * tam + desp_x,  0.5f * tam + desp_y, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+         0.5f * tam + desp_x, -0.5f * tam + desp_y, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f * tam + desp_x, -0.5f * tam + desp_y, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+        -0.5f * tam + desp_x,  0.5f * tam + desp_y, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+    };
+    unsigned int indices[] = {
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
+    };
 
     // ------------------------------------------------------------------
-    unsigned int VBOs[6], VAOs[6], EBOs[2];
-    glGenVertexArrays(6, VAOs); // Generamos seis VAOs y seis Buffers
-    glGenBuffers(6, VBOs);
-    glGenBuffers(2, EBOs); // Solamente usamos EBO para los círculos (ojos)
+    unsigned int VBOs[7], VAOs[7], EBOs[3];
+    glGenVertexArrays(7, VAOs); // Generamos seis VAOs y seis Buffers
+    glGenBuffers(7, VBOs);
+    glGenBuffers(3, EBOs); // Solamente usamos EBO para los círculos (ojos)
     // Triángulos tipo cero de la teselación PRINCIPAL
     // --------------------
     glBindVertexArray(VAOs[0]);
@@ -384,6 +401,44 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices3.size() * sizeof(int), &indices3[0], GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // Foco
+    glBindVertexArray(VAOs[6]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[6]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[2]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    // texture coord attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load and generate the texture
+    int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* data = stbi_load("foco2.png", &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);        
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);    
 
     // Para dibujar únicamente los bordes
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);    
@@ -510,7 +565,7 @@ int main()
                     }
 
                     break;
-                case 6:
+                case 6:                   
                     // ### Triángulo rota hasta quedar paralelo al suelo
                     // Tiempo: 0.5 segundos
 
@@ -726,6 +781,14 @@ int main()
             glUniform3fv(color_negro_loc, 1, color_ojos_negros);
             glBindVertexArray(VAOs[5]);
             glDrawElements(GL_TRIANGLES, 9 * TRI_POR_CIRC * listaCirc.size() / 2, GL_UNSIGNED_INT, 0);
+        }                        
+
+        if (tiempoIndex >= 6 && tiempoIndex <= 8) {
+            // Render foco
+            glBindTexture(GL_TEXTURE_2D, texture);
+            ourShader2.use();
+            glBindVertexArray(VAOs[6]);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }        
 
         // glfw: swap buffers
