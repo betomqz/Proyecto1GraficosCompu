@@ -1,5 +1,5 @@
 # Proyecto 1 para Gráficos por Computadora
 Integrantes del equipo:
-* Fabio Calo
-* Alberto Márquez
-* Pedro Olivares
+* Fabio G. Calo Dizy
+* José Alberto Márquez Luján
+* Pedro Olivares Sánchez

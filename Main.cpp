@@ -1,7 +1,10 @@
 /*
 * Código para generar una teselación de penrose.
-* Autor: José Alberto Márquez Luján, 187917
-* Fecha de entrega: 18 de septiembre de 2021
+* Autores: 
+    - Fabio G. Calo Dizy, 191489    
+    - José Alberto Márquez Luján, 187917
+    - Pedro Olivares Sánchez, 190198
+* Fecha de entrega: 17 de octubre de 2021
 *
 * Referencias: https://preshing.com/20110831/penrose-tiling-explained/
 */
@@ -16,8 +19,6 @@
 #include <learnopengl/shader_s.h>
 
 #include <iostream>
-// Fue necesario incluir otras bibliotecas para simplificar el código. Principalmente
-// para manejar números complejos y estructuras dinámicas.
 #include <cmath>
 #include <list>
 #include <complex>
@@ -129,6 +130,40 @@ list<struct triangulo*> subdividir(list<struct triangulo*> triangulos) {
     return resultado;
 }
 
+// --------------------------------- Creación de círculos
+//Número de triángulos usados para aproximar un círculo
+unsigned const int TRI_POR_CIRC = 10;
+
+//Círculos
+typedef struct Circ {
+    int color; // 0 o 1 (blanco o negro)    
+    float listaVert[TRI_POR_CIRC * 9];
+} circ;
+
+Circ crearCirc(int color, float x, float y, float radio) {
+    Circ nuevoCirc;
+    nuevoCirc.color = color;
+    float theta = 2 * pi / TRI_POR_CIRC;
+
+    for (int i = 0; i < 9 * TRI_POR_CIRC; i += 9) {
+        //Primer vért.
+        nuevoCirc.listaVert[i] = x;
+        nuevoCirc.listaVert[i + 1] = y;
+        nuevoCirc.listaVert[i + 2] = 0.0f;
+
+        //Segundo vért.
+        nuevoCirc.listaVert[i + 3] = x - radio * sin(-i * theta);
+        nuevoCirc.listaVert[i + 4] = y - radio * cos(-i * theta);
+        nuevoCirc.listaVert[i + 5] = 0.0f;
+
+        //Tercer vért.
+        nuevoCirc.listaVert[i + 6] = x - radio * sin(-(i + 1) * theta);
+        nuevoCirc.listaVert[i + 7] = y - radio * cos(-(i + 1) * theta);
+        nuevoCirc.listaVert[i + 8] = 0.0f;
+    }
+    return nuevoCirc;
+}
+
 // Este método no tiene una aplicación real en el código; sin embargo, lo utilicé para asegurarme
 // de que los valores que estaba generando el algoritmo fueran los correctos.
 void imprimeTriangulos(list<struct triangulo*> triangulos) {
@@ -166,7 +201,7 @@ int main()
             triProtag.push_back(t);
         else
             triangulos.push_back(t);
-    }
+    }    
 
     // Subdividimos los triángulos las veces que indice la constante NUM_SUBDIVISIONES.
     for (int j = 0; j < NUM_SUBDIVISONES; j++) {
@@ -230,6 +265,37 @@ int main()
         }
     }
 
+    // Ahora toca hacer los círculos.    
+    list<Circ> listaCirc;
+    vector<float> vertices2; //Lista de circ. blancos
+    vector<float> vertices3; //Lista de circ. negros
+    vector<int> indices2;
+    vector<int> indices3;
+
+    // Ojo izquierdo
+    listaCirc.push_back(crearCirc(0, 0.3f, 0.1f, 0.05f));
+    listaCirc.push_back(crearCirc(1, 0.288f, 0.1f, 0.03f));
+    // Ojo derecho
+    listaCirc.push_back(crearCirc(0, 0.38f, 0.1f, 0.05f));
+    listaCirc.push_back(crearCirc(1, 0.368f, 0.1f, 0.03f));
+
+    for (auto const& circActual : listaCirc) {
+        if (circActual.color == 0) {
+            for (int i = 0; i < TRI_POR_CIRC * 9; i++)
+                vertices2.push_back(circActual.listaVert[i]);
+        }
+        else {
+            for (int i = 0; i < TRI_POR_CIRC * 9; i++)
+                vertices3.push_back(circActual.listaVert[i]);
+        }
+    }
+
+    for (int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
+        indices2.push_back(i);
+
+    for (int i = 0; i < 3 * TRI_POR_CIRC * listaCirc.size() / 2; i++)
+        indices3.push_back(i);
+
     // #######################################################################################
 
     // ------------------------------
@@ -244,7 +310,7 @@ int main()
 
     // glfw creación de la ventana
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Teselaciones de Penrose - 187917", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Proyecto 1", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -268,9 +334,10 @@ int main()
     Shader ourShader("proyecto1.vs", "proyecto1.fs");
 
     // ------------------------------------------------------------------
-    unsigned int VBOs[4], VAOs[4];
-    glGenVertexArrays(4, VAOs); // Generamos cuatro VAOs y dos Buffers
-    glGenBuffers(4, VBOs);
+    unsigned int VBOs[6], VAOs[6], EBOs[2];
+    glGenVertexArrays(6, VAOs); // Generamos seis VAOs y seis Buffers
+    glGenBuffers(6, VBOs);
+    glGenBuffers(2, EBOs); // Solamente usamos EBO para los círculos (ojos)
     // Triángulos tipo cero de la teselación PRINCIPAL
     // --------------------
     glBindVertexArray(VAOs[0]);
@@ -299,7 +366,24 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, vert_unos_protag.size() * sizeof(float), &vert_unos_protag[0], GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
-
+    // Círculos blancos (Ojos)
+    // ---------------------
+    glBindVertexArray(VAOs[4]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[4]);
+    glBufferData(GL_ARRAY_BUFFER, vertices2.size() * sizeof(float), &vertices2[0], GL_STATIC_DRAW);    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices2.size() * sizeof(int), &indices2[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    //Círculos negros (Ojos)
+    // ---------------------
+    glBindVertexArray(VAOs[5]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[5]);
+    glBufferData(GL_ARRAY_BUFFER, vertices3.size() * sizeof(float), &vertices3[0], GL_STATIC_DRAW);    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices3.size() * sizeof(int), &indices3[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
     // Para dibujar únicamente los bordes
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);    
@@ -313,13 +397,15 @@ int main()
         float rotAux = 0.0f;
         // Declaración de las matrices de transformación que vamos a estar usando. Son la identidad por default.
         glm::mat4 transform = glm::mat4(1.0f);          // Matriz para transformar la teselación principal
-        glm::mat4 transform_protag = glm::mat4(1.0f);   // Matriz para transformar al triángulo protagonista
+        glm::mat4 transform_protag = glm::mat4(1.0f);   // Matriz para transformar al triángulo protagonista        
 
         // Colores
         GLfloat color1[] = { 0.043f, 0.145f, 0.271f };                  // Color 1 de la teselación principal
         GLfloat color2[] = { 0.698f, 0.761f, 0.929f };                  // Color 2 de la teselación principal
         GLfloat color_cero_protag[] = { 0.8705f, 0.7686f, 0.2509f };    // Color cero del triángulo protagonista
         GLfloat color_uno_protag[] = { 0.8705f, 0.7686f, 0.2509f };     // Color uno del triángulo protagonista
+        GLfloat color_ojos_blancos[] = { 1.0f, 1.0f, 1.0f };            // Color blanco de los ojos del protagonista
+        GLfloat color_ojos_negros[] = { 0.0f, 0.0f, 0.0f };             // Color blanco de los ojos del protagonista
 
         // Control de tiempos
         if (tiempoIndex < sizeof(tiempos) / sizeof(float)) {
@@ -337,7 +423,7 @@ int main()
 
                     // El triángulo protagonista va a estar fuera de la escena
                     transform_protag = glm::translate(transform_protag, glm::vec3(1.0f, 0.0f, 0.0f));                    
-                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+                    transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));                    
                     break;
                 case 1:
                     // ### Triángulo entra en escena
@@ -408,6 +494,21 @@ int main()
                     transform_protag = glm::translate(transform_protag, glm::vec3(aux, 0.0f, 0.0f));
                     scaleAmount = 0.5f;
                     transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+                    //Cambiamos los colores de los triangulos
+                    if (glfwGetTime() < .67) {
+                        color_cero_protag[0] = 1.0f; color_cero_protag[1] = 0.2f; color_cero_protag[2] = 0.2f;
+                        color_uno_protag[0] = 1.0f; color_uno_protag[1] = 0.2f; color_uno_protag[2] = 0.2f;
+                    }
+                    else if (glfwGetTime() < 1.33) {
+                        color_cero_protag[0] = 0.0f; color_cero_protag[1] = 0.5f; color_cero_protag[2] = 0.3f;
+                        color_uno_protag[0] = 0.0f; color_uno_protag[1] = 0.5f; color_uno_protag[2] = 0.3f;
+                    }
+                    else {
+                        color_cero_protag[0] = 0.2f; color_cero_protag[1] = 0.2f; color_cero_protag[2] = 1.0f;
+                        color_uno_protag[0] = 0.2f; color_uno_protag[1] = 0.2f; color_uno_protag[2] = 1.0f;
+                    }
+
                     break;
                 case 6:
                     // ### Triángulo rota hasta quedar paralelo al suelo
@@ -453,9 +554,20 @@ int main()
                     scaleAmount = 0.5f;
                     transform_protag = glm::scale(transform_protag, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
 
-                    // Cambiamos los colores
-                    color_cero_protag[0] = 0.043f; color_cero_protag[1] = 0.145f; color_cero_protag[2] = 0.271f;
-                    color_uno_protag[0] = 0.698f; color_uno_protag[1] = 0.761f; color_uno_protag[2] = 0.929f;                    
+                    // Cambiamos los colores aleatoriamente
+                    if (glfwGetTime() < 3) {
+                        color_cero_protag[0] = (float)rand() / (float)(RAND_MAX / 1);
+                        color_cero_protag[1] = (float)rand() / (float)(RAND_MAX / 1);
+                        color_cero_protag[2] = (float)rand() / (float)(RAND_MAX / 1);
+                        color_uno_protag[0] = (float)rand() / (float)(RAND_MAX / 1);
+                        color_uno_protag[1] = (float)rand() / (float)(RAND_MAX / 1);
+                        color_uno_protag[2] = (float)rand() / (float)(RAND_MAX / 1);
+                    }
+                    //Hasta que llegamos al que encaja con la teselación
+                    else {
+                        color_cero_protag[0] = 0.043f; color_cero_protag[1] = 0.145f; color_cero_protag[2] = 0.271f;
+                        color_uno_protag[0] = 0.698f; color_uno_protag[1] = 0.761f; color_uno_protag[2] = 0.929f;
+                    }
                     break;
                 case 9: 
                     // Nuevo triángulo sube
@@ -602,6 +714,20 @@ int main()
         glBindVertexArray(VAOs[3]);
         glDrawArrays(GL_TRIANGLES, 0, vert_unos_protag.size());
 
+        if (tiempoIndex != 13 && tiempoIndex != 7 && tiempoIndex != 8) {
+            // Dibujamos los círculos blancos                
+            unsigned int color_blanco_loc = glGetUniformLocation(ourShader.ID, "ourColor");
+            glUniform3fv(color_blanco_loc, 1, color_ojos_blancos);
+            glBindVertexArray(VAOs[4]);
+            glDrawElements(GL_TRIANGLES, 9 * TRI_POR_CIRC * listaCirc.size() / 2, GL_UNSIGNED_INT, 0);
+
+            // Dibujamos los triángulos tipo uno del triángulo protagonista                
+            unsigned int color_negro_loc = glGetUniformLocation(ourShader.ID, "ourColor");
+            glUniform3fv(color_negro_loc, 1, color_ojos_negros);
+            glBindVertexArray(VAOs[5]);
+            glDrawElements(GL_TRIANGLES, 9 * TRI_POR_CIRC * listaCirc.size() / 2, GL_UNSIGNED_INT, 0);
+        }        
+
         // glfw: swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -637,5 +763,4 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     else {
         glViewport(0, 0, height, height);
     }
-    //glViewport(0, 0, width, height);
 }
